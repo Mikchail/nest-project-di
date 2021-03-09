@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import axios from "axios"
 import { ITrack, TrackState } from "../types/track"
 
 const initialState: TrackState = {
@@ -7,6 +8,14 @@ const initialState: TrackState = {
   { "comments": [], "_id": "604654fe5959b41c88fab3e0", "name": "Абраб", "text": "Квадритульки", "artist": "Тестовый квестовый исполнитель чудес", "listens": 0, "audio": "audio/36f1b4e6-494a-4a5e-b0a5-f674b7295025.mp3", "picture": "picture/5f55c42e-1182-488f-893c-7886628834fc.png",  }],
   error: ''
 }
+
+const fetchTracksApi = createAsyncThunk(
+  'track/fetch',
+  async () => {
+    const response = await axios.get('http://localhost:5000/tracks')
+    return response.data
+  }
+)
 
 export const tracksReducer = createSlice({
   name: 'tracks',
@@ -19,8 +28,14 @@ export const tracksReducer = createSlice({
       state.tracks = action.payload;
       state.error = "";
     },
+  },
+  extraReducers: {
+    [fetchTracksApi.fulfilled.toString()]: (state, action) => {
+      state.tracks = action.payload;
+      state.error = "";
+    }
   }
 })
 
-export const TracksAction = { ...tracksReducer.actions }
+export const TracksAction = { ...tracksReducer.actions, fetchTracksApi }
 export default tracksReducer.reducer

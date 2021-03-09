@@ -4,7 +4,7 @@ import { TrackListType } from "../components/TrackList";
 import { RootState } from "../reducers";
 import { ITrack } from "../types/track";
 import Layout, { ILayoutProps } from "./Layout";
-
+import { TracksAction } from "../reducers";
 
 interface ITracksPageProps extends ILayoutProps {
   tracks: ITrack[];
@@ -21,6 +21,11 @@ class TracksPage<
   > extends Layout<P, S> {
 
   protected trackList: TrackListType = this.injector.get("components", "TrackList");
+  protected appStore = this.injector.get("global", "ReduxStore")
+  public componentDidMount(){
+    // super.componentDidMount();
+    this.appStore.dispatch(TracksAction.fetchTracksApi())
+  }
 
   public renderPage() {
     return (
